@@ -19,7 +19,7 @@ pip install -e diffusion_policy/.
 4. Ensure the directory structure looks like this:
 ```
 ws
-├── .venv               # Python virtual environment for this repo (created by env.bash)
+├── .venv               # Python virtual environment for this repo
 ├── data                # Contains data for each game run
 ├── diffusion_policy    # this repository
 ├── shepherding_game    # the shepherding pygame repository
