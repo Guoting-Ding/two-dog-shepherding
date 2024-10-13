@@ -1,10 +1,34 @@
 # Shepherding model using diffusion policy
 This repository contains code for building a shepherding model using diffusion policy and human behavior. It is based on the original [diffusion_policy](https://github.com/real-stanford/diffusion_policy) repository by Stanford.
 
+## Repository Setup
+All commands will be run from the `ws` directory.
 
-# Changelog
-- [data_conversion.py](https://github.com/real-stanford/diffusion_policy): A script for converting data to the .zarr format for training
-- [env_bash.setup](env_setup.bash): A script to install the necessary packages
+1. Clone this repository into the `ws` directory. 
+
+2. Clone the [shepherding repository](https://github.com/kylew239/Shepherd_game) into `ws.
+
+3. Setup the python virtual enviornment
+```
+python3 -m venv venv
+source venv/bin/activate
+./diffusion_policy/env.bash
+pip install -e diffusion_policy/.
+```
+
+4. Ensure the directory structure looks like this:
+```
+ws
+├── .venv               # Python virtual environment for this repo (created by env.bash)
+├── data                # Contains data for each game run
+├── diffusion_policy    # this repository
+├── shepherding_game    # the shepherding pygame repository
+└── converted.zarr      # The .zarr data
+```
+
+## Changelog
+- [data_conversion.py](diffusion_policy/scripts/data_conversion.py): A script for converting data to the .zarr format for training
+- [env.bash](env.bash): A script to install the necessary packages
 
 Below is the original README
 
