@@ -29,6 +29,7 @@ ws
 ## Changelog
 - [data_conversion.py](diffusion_policy/scripts/data_conversion.py): A script for converting data to the .zarr format for training
 - [env.bash](env.bash): A script to install the necessary packages
+- [README.md](README.md): This readme file. Modified to document this project
 
 Below is the original README
 
