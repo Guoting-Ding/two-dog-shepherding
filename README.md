@@ -6,7 +6,7 @@ All commands will be run from the `ws` directory.
 
 1. Clone this repository into the `ws` directory. 
 
-2. Clone the [shepherding repository](https://github.com/kylew239/Shepherd_game) into `ws.
+2. Clone the [shepherding repository](https://github.com/kylew239/Shepherd_game) into `ws`.
 
 3. Setup the python virtual enviornment
 ```
