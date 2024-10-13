@@ -1,3 +1,13 @@
+# Shepherding model using diffusion policy
+This repository contains code for building a shepherding model using diffusion policy and human behavior. It is based on the original [diffusion_policy](https://github.com/real-stanford/diffusion_policy) repository by Stanford.
+
+
+# Changelog
+- [data_conversion.py](https://github.com/real-stanford/diffusion_policy): A script for converting data to the .zarr format for training
+- [env_bash.setup](env_setup.bash): A script to install the necessary packages
+
+Below is the original README
+
 # Diffusion Policy
 
 [[Project page]](https://diffusion-policy.cs.columbia.edu/)
