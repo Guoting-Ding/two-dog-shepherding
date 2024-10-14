@@ -1,4 +1,5 @@
 import os
+from typing import List, Tuple
 
 import click
 import cv2
@@ -10,14 +11,16 @@ from diffusion_policy.diffusion_policy.common.replay_buffer import ReplayBuffer
 
 @click.command()
 @click.option('-c', '--config', required=True)
-def main(config):
+@click.option('-r', '--rotate', required=True)
+def main(config, rotate):
     """
     Convert the csv and bmp files from the shepherding game to zarr,
     the data format used for training models in this repo.
 
     Args:
         config (str): data_conversion config that defines how to convert the csv files
-            into the input/output formats for the diffusion policy model.    
+            into the input/output formats for the diffusion policy model.
+        rotate (bool): rotate existing data to create more data
     """
     cfg = OmegaConf.load(config)
 
@@ -43,15 +46,54 @@ def main(config):
             # cv2.imread("data/1/img/"+img)
             img_list.append(cv2.imread(path+"/img/"+img))
 
-        print(len(img_list))
+        img_list = np.array(img_list)
+        pos_list = np.loadtxt(path + "/pos.csv", delimiter=',', skiprows=1)
+
         episode = {
-            "img": np.array(img_list),
-            "action": np.loadtxt(path + "/pos.csv", delimiter=',', skiprows=1)
+            "img": img_list,
+            "action": pos_list
         }
         replay_buffer.add_episode(episode, compressors='disk')
 
+        if rotate:
+            # Rotate 90 degrees
+            add_rotation(img_list=img_list, pos_list=pos_list,
+                         replay_buff=replay_buffer)
+            # Rotate 180 degrees
+            add_rotation(img_list=img_list, pos_list=pos_list,
+                         replay_buff=replay_buffer)
+            # Rotate 270 degrees
+            add_rotation(img_list=img_list, pos_list=pos_list,
+                         replay_buff=replay_buffer)
+
     print(
         f"Converted {replay_buffer.n_episodes} episodes to zarr format successfully and saved to {zarr_path}")
+
+
+def add_rotation(img_list, pos_list, replay_buff):
+    rotated_images = [cv2.rotate(
+        image, cv2.ROTATE_90_COUNTERCLOCKWISE) for image in img_list]
+    rotated_pos = [rotate_pos(pos) for pos in pos_list]
+
+    episode = {
+        "img": np.array(rotated_images),
+        "action": np.array(rotated_pos)
+    }
+    replay_buff.add_episode(episode, compressors='disk')
+
+
+def rotate_pos(pos: List[float]) -> Tuple[float]:
+    """
+    Rotates the field coordinate by 90 degrees, ccw.
+
+    Args:
+        pos (List[float]): The x and y position
+
+    Returns:
+        List[float]: new x and y position
+    """
+    assert len(pos) == 2, "Postion must be x and y"
+    return [-pos[1]+150, pos[0]]
 
 
 if __name__ == '__main__':
