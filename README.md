@@ -26,10 +26,16 @@ ws
 └── converted.zarr      # The .zarr data
 ```
 
+5. If you run into `ModuleNotFoundError`, add the `ws` to your python path
+```
+export PYTHONPATH=.:$PYTHONPATH
+```
+
 ## Changelog
 - [data_conversion.py](diffusion_policy/scripts/data_conversion.py): A script for converting data to the .zarr format for training
 - [env.bash](env.bash): A script to install the necessary packages
 - [README.md](README.md): This readme file. Modified to document this project
+- [sheep_image_dataset.py](diffusion_policy/dataset/sheep_image_dataset.py): The iamge dataset for shepherding
 
 Below is the original README
 
