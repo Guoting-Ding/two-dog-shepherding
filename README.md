@@ -36,7 +36,7 @@ export PYTHONPATH=.:$PYTHONPATH
 - [env.bash](env.bash): A script to install the necessary packages
 - [README.md](README.md): This readme file. Modified to document this project
 - [sheep_image_dataset.py](diffusion_policy/dataset/sheep_image_dataset.py): The iamge dataset for shepherding
-
+- [data_conversion.yaml](diffusion_policy/config/task/data_conversion/data_conversion.yaml): Config file that determines how data is converted into the .zarr format
 Below is the original README
 
 # Diffusion Policy
