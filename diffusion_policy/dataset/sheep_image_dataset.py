@@ -14,7 +14,7 @@ from diffusion_policy.model.common.normalizer import LinearNormalizer
 
 
 # dataset for shepherding
-class SheeepDataset(BaseImageDataset):
+class SheepDataset(BaseImageDataset):
     def __init__(self,
                  zarr_path,
                  horizon=1,
@@ -79,7 +79,7 @@ class SheeepDataset(BaseImageDataset):
 
         data = {
             'obs': {
-                'image': image,  # T, 3, 96, 96
+                'image': image,  # T, 3, 230, 230
             },
             'action': sample['action'].astype(np.float32)  # T, 2
         }
@@ -90,16 +90,3 @@ class SheeepDataset(BaseImageDataset):
         data = self._sample_to_data(sample)
         torch_data = dict_apply(data, torch.from_numpy)
         return torch_data
-
-
-def test():
-    import os
-    zarr_path = os.path.expanduser(
-        '~/dev/diffusion_policy/data/pusht/pusht_cchi_v7_replay.zarr')
-    dataset = SheeepDataset(zarr_path, horizon=16)
-
-    # from matplotlib import pyplot as plt
-    # normalizer = dataset.get_normalizer()
-    # nactions = normalizer['action'].normalize(dataset.replay_buffer['action'])
-    # diff = np.diff(nactions, axis=0)
-    # dists = np.linalg.norm(np.diff(nactions, axis=0), axis=-1)
