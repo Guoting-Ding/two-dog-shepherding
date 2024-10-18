@@ -14,6 +14,9 @@ shape_meta: &shape_meta
     image:
       shape: *image_shape
       type: rgb
+    agent_pos:
+      shape: [2]
+      type: lowdim
   action:
     shape: [2]
 
@@ -22,13 +25,10 @@ env_runner:
 
 dataset:
   _target_: diffusion_policy.dataset.sheep_image_dataset.SheepDataset
-  shape_meta: *shape_meta
-  dataset_path: ${task.dataset_path}
+  zarr_path: ${task.dataset_path}
   horizon: ${horizon}
   pad_before: ${eval:'${n_obs_steps}-1+${n_latency_steps}'}
   pad_after: ${eval:'${n_action_steps}-1'}
-  n_obs_steps: ${n_obs_steps}
-  n_latency_steps: ${n_latency_steps}
   seed: 42
   val_ratio: 0.02
   max_train_episodes: null

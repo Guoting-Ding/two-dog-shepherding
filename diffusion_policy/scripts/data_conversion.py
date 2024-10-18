@@ -48,14 +48,15 @@ def main(config, rotate):
 
         img_list = np.array(img_list)
         pos_list = np.loadtxt(path + "/pos.csv", delimiter=',', skiprows=1)
-
         episode = {
             "img": img_list,
-            "action": pos_list
+            "pos": pos_list[:, 0:2],
+            "action": pos_list[:, 2:4]
         }
         replay_buffer.add_episode(episode, compressors='disk')
 
-        if rotate:
+        # TODO: Update this to take in position and action
+        if rotate.lower == 'true':
             # Rotate 90 degrees
             add_rotation(img_list=img_list, pos_list=pos_list,
                          replay_buff=replay_buffer)
