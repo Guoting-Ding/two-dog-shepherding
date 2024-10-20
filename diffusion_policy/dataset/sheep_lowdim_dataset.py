@@ -9,12 +9,12 @@ from diffusion_policy.common.pytorch_util import dict_apply
 from diffusion_policy.common.replay_buffer import ReplayBuffer
 from diffusion_policy.common.sampler import (SequenceSampler, downsample_mask,
                                              get_val_mask)
-from diffusion_policy.dataset.base_dataset import BaseImageDataset
+from diffusion_policy.dataset.base_dataset import BaseLowdimDataset
 from diffusion_policy.model.common.normalizer import LinearNormalizer
 
 
 # dataset for shepherding
-class SheepDataset(BaseImageDataset):
+class SheepDataset(BaseLowdimDataset):
     def __init__(self,
                  zarr_path,
                  horizon=1,
@@ -27,7 +27,7 @@ class SheepDataset(BaseImageDataset):
 
         super().__init__()
         self.replay_buffer = ReplayBuffer.copy_from_path(
-            zarr_path, keys=['img', 'pos', 'com', 'dist', 'action'])
+            zarr_path, keys=['pos', 'com', 'dist', 'action'])
 
         val_mask = get_val_mask(
             n_episodes=self.replay_buffer.n_episodes,
@@ -71,21 +71,18 @@ class SheepDataset(BaseImageDataset):
         }
         normalizer = LinearNormalizer()
         normalizer.fit(data=data, last_n_dims=1, mode=mode, **kwargs)
-        normalizer['image'] = get_image_range_normalizer()
         return normalizer
 
     def __len__(self) -> int:
         return len(self.sampler)
 
     def _sample_to_data(self, sample):
-        image = np.moveaxis(sample['img'], -1, 1)/255
         pos = sample['pos'].astype(np.float)
         com = sample['com'].astype(np.float)
         dist = sample['dist'].astype(np.float)
 
         data = {
             'obs': {
-                'image': image,  # T, 3, 230, 230
                 'pos': pos,
                 'com': com,
                 'dist': dist,

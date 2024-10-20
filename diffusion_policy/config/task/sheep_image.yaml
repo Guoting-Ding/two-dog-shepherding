@@ -4,7 +4,7 @@ defaults:
 
 name: sheep_image
 
-dataset_path: ../cons_goal_converted.zarr
+dataset_path: ../com_dog_dist_converted.zarr
 
 # Shapes must match the data conversion config file
 image_shape: &image_shape ${task.data_conversion.image_shape}
@@ -16,6 +16,12 @@ shape_meta: &shape_meta
       type: rgb
     pos:
       shape: [2]
+      type: low_dim
+    com:
+      shape: [2]
+      type: low_dim
+    dist:
+      shape: [1]
       type: low_dim
   action:
     shape: [2]

@@ -47,11 +47,13 @@ def main(config, rotate):
             img_list.append(cv2.imread(path+"/img/"+img))
 
         img_list = np.array(img_list)
-        pos_list = np.loadtxt(path + "/pos.csv", delimiter=',', skiprows=1)
+        pos_list = np.loadtxt(path + "/pos.csv", delimiter=',', skiprows=0)
         episode = {
             "img": img_list,
             "pos": pos_list[:, 0:2],
-            "action": pos_list[:, 2:4]
+            "action": pos_list[:, 2:4],
+            "com": pos_list[:, 4:6],
+            "dist": pos_list[:, 6:7],
         }
         replay_buffer.add_episode(episode, compressors='disk')
 
