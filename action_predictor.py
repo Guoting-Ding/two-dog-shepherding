@@ -1,25 +1,31 @@
 #!/usr/bin/env python
-import csv
+import sys
 import threading
-import time
 from collections import deque
-from enum import Enum
-from enum import auto as enum_auto
 from typing import Dict
 
+import click
 import dill
 import hydra
 import numpy as np
 import pygame
 import torch
-import yaml
-from hydra import compose, initialize
-from hydra.core.hydra_config import HydraConfig
+from hydra import compose
+from omegaconf import OmegaConf
 
 from diffusion_policy.common.pytorch_util import dict_apply
 from diffusion_policy.policy.base_image_policy import BaseImagePolicy
 from diffusion_policy.workspace.base_workspace import BaseWorkspace
 from shepherd_game.game import Game
+from shepherd_game.utils import dist
+
+# use line-buffering for both stdout and stderr
+sys.stdout = open(sys.stdout.fileno(), mode='w', buffering=1)
+sys.stderr = open(sys.stderr.fileno(), mode='w', buffering=1)
+
+
+# allows arbitrary python code execution in configs using the ${eval:''} resolver
+OmegaConf.register_new_resolver("eval", eval, replace=True)
 
 
 class action_predictor:
@@ -79,9 +85,16 @@ class action_predictor:
         # shape = (2, 2)
         pos = np.stack([x['pos'] for x in self.obs_deque])
 
+        com = np.stack([x['com'] for x in self.obs_deque])
+        dist = np.stack([x['dist'] for x in self.obs_deque])
+
         # Convert to torch Tensors of the right shape
-        obs_data_tensors = dict_apply(
-            {"image": images, "pos": pos},
+        obs_data_tensors = dict_apply({
+            "image": images,
+            "pos": pos,
+            "com": com,
+            "dist": dist,
+        },
             lambda x: torch.from_numpy(x).unsqueeze(0).to(self.device)
         )
 
@@ -98,11 +111,11 @@ class action_predictor:
 
     def get_obs(self) -> None:
         return {
-            # 'image': np.transpose(pygame.surfarray.array3d(
-            #     self.env.screen.convert()), (2, 0, 1)).astype(np.float32),
             'image': np.transpose(pygame.surfarray.array3d(
                 self.env.screen.convert()), (2, 1, 0)).astype(np.float32),
-            'pos': self.env.dog.astype(np.float32)
+            'pos': self.env.dog.astype(np.float32),
+            'com': self.env.CoM.astype(np.float32),
+            'dist': dist(self.env.CoM, self.env.target).astype(np.float32),
         }
 
     def run(self) -> None:
@@ -131,6 +144,12 @@ class action_predictor:
                 self.inference_thread.start()
 
 
-if __name__ == '__main__':
+@click.command()
+@click.option('-c', '--ckpt_path', required=True)
+def main(ckpt_path: str):
     action_predictor(
-        '../nb/latest.ckpt', 'cuda:0').run()
+        ckpt_path, 'cuda:0').run()
+
+
+if __name__ == '__main__':
+    main()
