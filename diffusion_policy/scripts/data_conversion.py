@@ -43,21 +43,23 @@ def main(config, rotate):
                            key=lambda x: int(os.path.splitext(x)[0]))
         img_list = []
         for img in img_files:
-            # cv2.imread("data/1/img/"+img)
             img_list.append(cv2.imread(path+"/img/"+img))
 
         img_list = np.array(img_list)
         pos_list = np.loadtxt(path + "/pos.csv", delimiter=',', skiprows=0)
+        sheep_pos = np.loadtxt(path + "/sheep_pos.csv",
+                               delimiter=',', skiprows=0)
         episode = {
             "img": img_list,
             "pos": pos_list[:, 0:2],
             "action": pos_list[:, 2:4],
             "com": pos_list[:, 4:6],
             "dist": pos_list[:, 6:7],
+            "sheep_pos": sheep_pos
         }
         replay_buffer.add_episode(episode, compressors='disk')
 
-        # TODO: Update this to take in position and action
+        # TODO: Update this to take in position and action and sheep_pos
         if rotate.lower == 'true':
             # Rotate 90 degrees
             add_rotation(img_list=img_list, pos_list=pos_list,
@@ -70,7 +72,8 @@ def main(config, rotate):
                          replay_buff=replay_buffer)
 
     print(
-        f"Converted {replay_buffer.n_episodes} episodes to zarr format successfully and saved to {zarr_path}")
+        f"Converted {replay_buffer.n_episodes}",
+        f"episodes to zarr format successfully and saved to {zarr_path}")
 
 
 def add_rotation(img_list, pos_list, replay_buff):

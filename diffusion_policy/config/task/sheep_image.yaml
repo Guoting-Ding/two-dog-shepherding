@@ -4,7 +4,7 @@ defaults:
 
 name: sheep_image
 
-dataset_path: ../com_dog_dist_converted.zarr
+dataset_path: ../24.zarr
 
 # Shapes must match the data conversion config file
 image_shape: &image_shape ${task.data_conversion.image_shape}
@@ -17,11 +17,8 @@ shape_meta: &shape_meta
     pos:
       shape: [2]
       type: low_dim
-    com:
-      shape: [2]
-      type: low_dim
-    dist:
-      shape: [1]
+    sheep_pos:
+      shape: [10]
       type: low_dim
   action:
     shape: [2]
@@ -36,5 +33,5 @@ dataset:
   pad_before: ${eval:'${n_obs_steps}-1+${n_latency_steps}'}
   pad_after: ${eval:'${n_action_steps}-1'}
   seed: 42
-  val_ratio: 0.02
+  val_ratio: 0.20
   max_train_episodes: null

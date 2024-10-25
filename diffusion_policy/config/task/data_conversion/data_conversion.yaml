@@ -2,7 +2,7 @@ name: conversion_test
 
 data_dir: com_dog_dist/
 output_file: com_dog_dist_converted
-image_shape: [3, 130, 130]
+image_shape: [3, 180, 180]
 
 # Data folders to include, inclusive. In this example,
 # all folders, 1-16, will be included
