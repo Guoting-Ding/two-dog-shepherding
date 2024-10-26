@@ -1,10 +1,11 @@
 import copy
+import logging
+import pathlib
 from typing import Dict
 
 import numpy as np
 import torch
 
-from diffusion_policy.common.normalize_util import get_image_range_normalizer
 from diffusion_policy.common.pytorch_util import dict_apply
 from diffusion_policy.common.replay_buffer import ReplayBuffer
 from diffusion_policy.common.sampler import (SequenceSampler, downsample_mask,
@@ -13,7 +14,6 @@ from diffusion_policy.dataset.base_dataset import BaseLowdimDataset
 from diffusion_policy.model.common.normalizer import LinearNormalizer
 
 
-# dataset for shepherding
 class SheepDataset(BaseLowdimDataset):
     def __init__(self,
                  zarr_path,
@@ -24,7 +24,6 @@ class SheepDataset(BaseLowdimDataset):
                  val_ratio=0.0,
                  max_train_episodes=None
                  ):
-
         super().__init__()
         self.replay_buffer = ReplayBuffer.copy_from_path(
             zarr_path, keys=['pos', 'sheep_pos', 'action'])
@@ -44,7 +43,8 @@ class SheepDataset(BaseLowdimDataset):
             sequence_length=horizon,
             pad_before=pad_before,
             pad_after=pad_after,
-            episode_mask=train_mask)
+            episode_mask=train_mask
+        )
         self.train_mask = train_mask
         self.horizon = horizon
         self.pad_before = pad_before
@@ -63,14 +63,13 @@ class SheepDataset(BaseLowdimDataset):
         return val_set
 
     def get_normalizer(self, mode='limits', **kwargs):
-        data = {
-            'action': self.replay_buffer['action'],
-            'pos': self.replay_buffer['pos'],
-            'sheep_pos': self.replay_buffer['sheep_pos'],
-        }
+        data = self._sample_to_data(self.replay_buffer)
         normalizer = LinearNormalizer()
         normalizer.fit(data=data, last_n_dims=1, mode=mode, **kwargs)
         return normalizer
+
+    def get_all_actions(self) -> torch.Tensor:
+        return torch.from_numpy(self.replay_buffer[self.action_key])
 
     def __len__(self) -> int:
         return len(self.sampler)
@@ -80,16 +79,14 @@ class SheepDataset(BaseLowdimDataset):
         sheep_pos = sample['sheep_pos'].astype(np.float)
 
         data = {
-            'obs': {
-                'pos': pos,
-                'sheep_pos': sheep_pos,
-            },
-            'action': sample['action'].astype(np.float32)  # T, 2
+            'obs': np.hstack([pos, sheep_pos]),
+            'action': sample['action']
         }
         return data
 
     def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
         sample = self.sampler.sample_sequence(idx)
         data = self._sample_to_data(sample)
+
         torch_data = dict_apply(data, torch.from_numpy)
         return torch_data
