@@ -113,7 +113,7 @@ logging:
   project: diffusion_policy_debug
   resume: True
   mode: online
-  name: ${task.dataset_path}_${name}_${task_name}
+  name: ${task.dataset_path}
   tags: ["${name}", "${task_name}", "${exp_name}"]
   id: null
   group: null
