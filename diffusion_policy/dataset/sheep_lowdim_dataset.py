@@ -9,12 +9,12 @@ from diffusion_policy.common.pytorch_util import dict_apply
 from diffusion_policy.common.replay_buffer import ReplayBuffer
 from diffusion_policy.common.sampler import (SequenceSampler, downsample_mask,
                                              get_val_mask)
-from diffusion_policy.dataset.base_dataset import BaseLowdimDataset
+from diffusion_policy.dataset.base_dataset import BaseImageDataset
 from diffusion_policy.model.common.normalizer import LinearNormalizer
 
 
 # dataset for shepherding
-class SheepDataset(BaseLowdimDataset):
+class SheepDataset(BaseImageDataset):
     def __init__(self,
                  zarr_path,
                  horizon=1,
@@ -27,7 +27,7 @@ class SheepDataset(BaseLowdimDataset):
 
         super().__init__()
         self.replay_buffer = ReplayBuffer.copy_from_path(
-            zarr_path, keys=['pos', 'com', 'dist', 'action'])
+            zarr_path, keys=['pos', 'sheep_pos', 'action'])
 
         val_mask = get_val_mask(
             n_episodes=self.replay_buffer.n_episodes,
@@ -66,8 +66,7 @@ class SheepDataset(BaseLowdimDataset):
         data = {
             'action': self.replay_buffer['action'],
             'pos': self.replay_buffer['pos'],
-            'com': self.replay_buffer['com'],
-            'dist': self.replay_buffer['dist'],
+            'sheep_pos': self.replay_buffer['sheep_pos'],
         }
         normalizer = LinearNormalizer()
         normalizer.fit(data=data, last_n_dims=1, mode=mode, **kwargs)
@@ -78,14 +77,12 @@ class SheepDataset(BaseLowdimDataset):
 
     def _sample_to_data(self, sample):
         pos = sample['pos'].astype(np.float)
-        com = sample['com'].astype(np.float)
-        dist = sample['dist'].astype(np.float)
+        sheep_pos = sample['sheep_pos'].astype(np.float)
 
         data = {
             'obs': {
                 'pos': pos,
-                'com': com,
-                'dist': dist,
+                'sheep_pos': sheep_pos,
             },
             'action': sample['action'].astype(np.float32)  # T, 2
         }

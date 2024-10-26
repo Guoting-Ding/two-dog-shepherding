@@ -31,14 +31,16 @@ OmegaConf.register_new_resolver("eval", eval, replace=True)
 class action_predictor:
     """Infer and predict actions for shepherding"""
 
-    def __init__(self, ckpt_path: str, device: str) -> None:
+    def __init__(self, ckpt_path: str, device: str = 'cuda:0', seed: int = None) -> None:
         """
         Create the action_predictor object.
 
         Args:
             ckpt_path (str): Path to the checkpoint file.
+            device (str): Device to use. Defaults to 'cuda:0'
+            seed (Int | None): Seed to use for the game.
         """
-        self.env = Game()
+        self.env = Game(seed=seed)
         self.fpsClock = pygame.time.Clock()
 
         # Load checkpoint
@@ -76,8 +78,6 @@ class action_predictor:
 
     def infer(self) -> None:
         """Infer next set of actions"""
-        self.running_inference = True
-
         # stack the last obs_horizon number of observations
         # shape = (2, 3, 130, 130)
         images = np.stack([x['image'] for x in self.obs_deque])
@@ -85,15 +85,18 @@ class action_predictor:
         # shape = (2, 2)
         pos = np.stack([x['pos'] for x in self.obs_deque])
 
-        com = np.stack([x['com'] for x in self.obs_deque])
-        dist = np.stack([x['dist'] for x in self.obs_deque])
+        sheep_pos = np.stack([x['sheep_pos'] for x in self.obs_deque])
+
+        # com = np.stack([x['com'] for x in self.obs_deque])
+        # dist = np.stack([x['dist'] for x in self.obs_deque])
 
         # Convert to torch Tensors of the right shape
         obs_data_tensors = dict_apply({
             "image": images,
             "pos": pos,
-            "com": com,
-            "dist": dist,
+            "sheep_pos": sheep_pos
+            # "com": com,
+            # "dist": dist,
         },
             lambda x: torch.from_numpy(x).unsqueeze(0).to(self.device)
         )
@@ -107,15 +110,18 @@ class action_predictor:
         self.action = result['action'].squeeze(
             0).to('cpu').numpy().tolist()
 
-        self.running_inference = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                break
 
     def get_obs(self) -> None:
         return {
             'image': np.transpose(pygame.surfarray.array3d(
                 self.env.screen.convert()), (2, 1, 0)).astype(np.float32),
             'pos': self.env.dog.astype(np.float32),
-            'com': self.env.CoM.astype(np.float32),
-            'dist': dist(self.env.CoM, self.env.target).astype(np.float32),
+            'sheep_pos': np.array([pos for sheep in self.env.sheep for pos in sheep]).astype(np.float32)
+            # 'com': self.env.CoM.astype(np.float32),
+            # 'dist': dist(self.env.CoM, self.env.target).astype(np.float32),
         }
 
     def run(self) -> None:
@@ -126,12 +132,17 @@ class action_predictor:
             self.env.render()
 
             # Execute the action
+            done = False
             if len(self.action) > 0:
                 action = self.action.pop()
-                self.env.step(np.array(action))
+                done = self.env.step(np.array(action))
 
             else:
-                self.env.step(np.array([0.0, 0.0]))
+                done = self.env.step(np.array([0.0, 0.0]))
+
+            if done:
+                print("success")
+                break
 
             # save observations
             self.obs_deque.append(self.get_obs())
@@ -148,7 +159,7 @@ class action_predictor:
 @click.option('-c', '--ckpt_path', required=True)
 def main(ckpt_path: str):
     action_predictor(
-        ckpt_path, 'cuda:0').run()
+        ckpt_path, 'cuda:0', seed=None).run()
 
 
 if __name__ == '__main__':

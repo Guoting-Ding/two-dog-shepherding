@@ -1,27 +1,39 @@
 defaults:
   - _self_
-  - task: sheep_image
+  - task: sheep_lowdim
 
-name: train_diffusion_transformer_hybrid
-_target_: diffusion_policy.workspace.train_diffusion_transformer_hybrid_workspace.TrainDiffusionTransformerHybridWorkspace
+name: train_diffusion_unet_lowdim
+_target_: diffusion_policy.workspace.train_diffusion_unet_lowdim_workspace.TrainDiffusionUnetLowdimWorkspace
 
+obs_dim: ${task.obs_dim}
+action_dim: ${task.action_dim}
+keypoint_dim: ${task.keypoint_dim}
 task_name: ${task.name}
-shape_meta: ${task.shape_meta}
 exp_name: "default"
 
 horizon: 16
 n_obs_steps: 2
 n_action_steps: 8
 n_latency_steps: 0
-dataset_obs_steps: ${n_obs_steps}
 past_action_visible: False
 keypoint_visible_rate: 1.0
-obs_as_cond: True
+obs_as_local_cond: False
+obs_as_global_cond: True
+pred_action_steps_only: False
 
 policy:
-  _target_: diffusion_policy.policy.diffusion_transformer_hybrid_image_policy.DiffusionTransformerHybridImagePolicy
+  _target_: diffusion_policy.policy.diffusion_unet_lowdim_policy.DiffusionUnetLowdimPolicy
 
-  shape_meta: ${shape_meta}
+  model:
+    _target_: diffusion_policy.model.diffusion.conditional_unet1d.ConditionalUnet1D
+    input_dim: "${eval: ${task.action_dim} if ${obs_as_local_cond} or ${obs_as_global_cond} else ${task.obs_dim} + ${task.action_dim}}"
+    local_cond_dim: "${eval: ${task.obs_dim} if ${obs_as_local_cond} else None}"
+    global_cond_dim: "${eval: ${task.obs_dim}*${n_obs_steps} if ${obs_as_global_cond} else None}"
+    diffusion_step_embed_dim: 256
+    down_dims: [256, 512, 1024]
+    kernel_size: 5
+    n_groups: 8
+    cond_predict_scale: True
   
   noise_scheduler:
     _target_: diffusers.schedulers.scheduling_ddpm.DDPMScheduler
@@ -34,23 +46,15 @@ policy:
     prediction_type: epsilon # or sample
 
   horizon: ${horizon}
+  obs_dim: ${obs_dim}
+  action_dim: ${action_dim}
   n_action_steps: ${eval:'${n_action_steps}+${n_latency_steps}'}
   n_obs_steps: ${n_obs_steps}
   num_inference_steps: 100
-
-  #crop_shape: [76, 76]
-  obs_encoder_group_norm: True
-  eval_fixed_crop: True
-
-  n_layer: 8
-  n_cond_layers: 0  # >0: use transformer encoder for cond, otherwise use MLP
-  n_head: 4
-  n_emb: 256
-  p_drop_emb: 0.0
-  p_drop_attn: 0.3
-  causal_attn: True
-  time_as_cond: True # if false, use BERT like encoder only arch, time as input
-  obs_as_cond: ${obs_as_cond}
+  obs_as_local_cond: ${obs_as_local_cond}
+  obs_as_global_cond: ${obs_as_global_cond}
+  pred_action_steps_only: ${pred_action_steps_only}
+  oa_step_convention: True
 
   # scheduler.step params
   # predict_epsilon: True
@@ -64,24 +68,25 @@ ema:
   max_value: 0.9999
 
 dataloader:
-  batch_size: 64
-  num_workers: 8
+  batch_size: 256
+  num_workers: 1
   shuffle: True
   pin_memory: True
   persistent_workers: False
 
 val_dataloader:
-  batch_size: 64
-  num_workers: 8
+  batch_size: 256
+  num_workers: 1
   shuffle: False
   pin_memory: True
   persistent_workers: False
 
 optimizer:
-  transformer_weight_decay: 1.0e-3
-  obs_encoder_weight_decay: 1.0e-6
-  learning_rate: 1.0e-4
-  betas: [0.9, 0.95]
+  _target_: torch.optim.AdamW
+  lr: 1.0e-4
+  betas: [0.95, 0.999]
+  eps: 1.0e-8
+  weight_decay: 1.0e-6
 
 training:
   device: "cuda:0"
@@ -90,19 +95,16 @@ training:
   resume: True
   # optimization
   lr_scheduler: cosine
-  # Transformer needs LR warmup
-  lr_warmup_steps: 1000
-  num_epochs: 101
+  lr_warmup_steps: 500
+  num_epochs: 201
   gradient_accumulate_every: 1
-  # EMA destroys performance when used with BatchNorm
-  # replace BatchNorm with GroupNorm.
   use_ema: True
   # training loop control
   # in epochs
-  rollout_every: 50
+  rollout_every: 20
   checkpoint_every: 20
   val_every: 1
-  sample_every: 5
+  sample_every: 1
   # steps per epoch
   max_train_steps: null
   max_val_steps: null
@@ -135,7 +137,7 @@ hydra:
   job:
     override_dirname: ${name}
   run:
-    dir: data/outputs/transformer/image/${task.dataset_path}
+    dir: data/outputs/transformer/lowdim/${task.dataset_path}
   sweep:
-    dir: data/outputs/transformer/image/${task.dataset_path}
+    dir: data/outputs/transformer/lowdim/${task.dataset_path}
     subdir: ${hydra.job.num}

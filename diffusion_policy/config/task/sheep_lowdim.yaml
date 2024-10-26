@@ -4,14 +4,15 @@ defaults:
 
 name: sheep_lowdim
 
-dataset_path: ../com_dog_dist_converted.zarr
+dataset_path: ../24.zarr
 
-obs_dim: 5 # 9*2 keypoints + 2 state
+# 1 shepherd and 5 sheep, 2 dim per object
+obs_dim: 12
 action_dim: 2
-keypoint_dim: 2
+keypoint_dim: 0
 
 env_runner:
-  _target_: diffusion_policy.env_runner.sheep_lowdim_runner.
+  _target_: diffusion_policy.env_runner.sheep_lowdim_runner.SheepLowdimRunner
   keypoint_visible_rate: ${keypoint_visible_rate}
   n_train: 6
   n_train_vis: 2
