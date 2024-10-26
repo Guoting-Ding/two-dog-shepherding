@@ -9,12 +9,12 @@ from diffusion_policy.common.pytorch_util import dict_apply
 from diffusion_policy.common.replay_buffer import ReplayBuffer
 from diffusion_policy.common.sampler import (SequenceSampler, downsample_mask,
                                              get_val_mask)
-from diffusion_policy.dataset.base_dataset import BaseImageDataset
+from diffusion_policy.dataset.base_dataset import BaseLowdimDataset
 from diffusion_policy.model.common.normalizer import LinearNormalizer
 
 
 # dataset for shepherding
-class SheepDataset(BaseImageDataset):
+class SheepDataset(BaseLowdimDataset):
     def __init__(self,
                  zarr_path,
                  horizon=1,
