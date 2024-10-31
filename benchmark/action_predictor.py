@@ -2,7 +2,6 @@
 import sys
 import threading
 from collections import deque
-from typing import Dict
 
 import click
 import dill
@@ -10,15 +9,14 @@ import hydra
 import numpy as np
 import pygame
 import torch
-from hydra import compose
 from omegaconf import OmegaConf
+from pygame.locals import *
 
 from diffusion_policy.common.pytorch_util import dict_apply
 from diffusion_policy.policy.base_image_policy import BaseImagePolicy
 from diffusion_policy.workspace.base_workspace import BaseWorkspace
-from shepherd_game.game import Game
-from shepherd_game.parameters import FIELD_LENGTH, PADDING
-from shepherd_game.utils import dist
+from shepherd_game.game import BLACK, WHITE, Game
+from shepherd_game.parameters import FIELD_LENGTH, PADDING, TARGET_RADIUS
 
 # use line-buffering for both stdout and stderr
 sys.stdout = open(sys.stdout.fileno(), mode='w', buffering=1)
@@ -32,7 +30,12 @@ OmegaConf.register_new_resolver("eval", eval, replace=True)
 class action_predictor:
     """Infer and predict actions for shepherding"""
 
-    def __init__(self, ckpt_path: str, device: str = 'cuda:0', seed: int = None, save_path: str = None) -> None:
+    def __init__(self,
+                 ckpt_path: str,
+                 device: str = 'cuda:0',
+                 seed: int = None,
+                 save_path: str = None,
+                 draw_path: bool = True) -> None:
         """
         Create the action_predictor object.
 
@@ -40,21 +43,31 @@ class action_predictor:
             ckpt_path (str): Path to the checkpoint file.
             device (str): Device to use. Defaults to 'cuda:0'
             seed (Int | None): Seed to use for the game.
+            save_path (str | None): Path to save the result.
+            draw_path (bool): Draw the previous path of the shepherd. Defaults
+                to True.
+
         """
         self.img = True if "img" in ckpt_path else False
         self.video: cv2.VideoWriter | None = None
         if save_path:
             import cv2
-
+            print("saving in: ", save_path+'.mp4')
             width = (FIELD_LENGTH+2*PADDING[0])*4
             height = (FIELD_LENGTH+2*PADDING[1])*4
             self.video = cv2.VideoWriter(
-                save_path,
+                save_path + '.mp4',
                 cv2.VideoWriter_fourcc(*'MP4V'),
                 30.0, (width, height))
 
         self.env = Game(seed=seed)
         self.fpsClock = pygame.time.Clock()
+
+        if draw_path:
+            self.screen =\
+                pygame.display.set_mode((FIELD_LENGTH+2*PADDING[0],
+                                         FIELD_LENGTH+2*PADDING[1]),
+                                        SCALED)
 
         # Load checkpoint
         self.payload = torch.load(
@@ -79,7 +92,7 @@ class action_predictor:
         self.obs_deque = deque(maxlen=self.policy.n_obs_steps)
 
         # Flags
-        self.running_inference = False
+        self.draw_path = draw_path
 
         # Action prediction latency
         self.latency_counter = 0
@@ -153,7 +166,7 @@ class action_predictor:
         """
         count = 0
         while count < iters:
-            self.env.render()
+            self.env.render(draw=(not self.draw_path))
 
             # Execute the action
             done = False
@@ -168,9 +181,36 @@ class action_predictor:
             obs = self.get_obs()
             self.obs_deque.append(obs)
 
+            # After saving the observation, we can draw in the new path
+            # This prevents the path from interfering with observations and inferences
+            if self.draw_path:
+                self.screen.fill((19, 133, 16))
+
+                # Draw all previous points
+                for data in self.env.pos:
+                    x, y = data[0], data[1]
+                    pygame.draw.circle(self.screen,
+                                       (50, 242, 255),
+                                       (x + PADDING[0], y+PADDING[0]),
+                                       1, 0)
+
+                # Draw game elements, detailed in shepherd_game/game.py:Game().render()
+                pygame.draw.circle(self.screen, BLACK, tuple(
+                    PADDING + self.env.target), TARGET_RADIUS, 0)
+                pygame.draw.circle(self.screen, (25, 25, 255), tuple(
+                    PADDING + self.env.dog), 1, 0)
+                [pygame.draw.circle(self.screen, WHITE, tuple(PADDING + a), 1, 0)
+                    for a in self.env.sheep]
+                pygame.draw.circle(self.screen, BLACK,
+                                   tuple(PADDING + self.env.CoM), 2, 0)
+                pygame.draw.circle(self.screen, (200, 200, 200),
+                                   tuple(PADDING + self.env.CoM), 1, 0)
+                pygame.display.update()
+
             if self.video is not None:
+                screen = self.screen if self.draw_path else self.env.screen
                 frame = np.transpose(pygame.surfarray.array3d(
-                    self.env.screen), (1, 0, 2))
+                    screen), (1, 0, 2))
 
                 # convert from rgb to bgr
                 frame = frame[..., ::-1]
@@ -212,17 +252,17 @@ class action_predictor:
 def main(ckpt_path: str, save_path: str, run_multiple: str, random_seed: str = None):
     if not run_multiple:
         action_predictor(
-            ckpt_path, 'cuda:0', seed=0, save_path=save_path+'.mp4').run()
+            ckpt_path, 'cuda:0', seed=0, save_path=save_path).run()
     else:
         count = 1
 
-        while count < int(run_multiple):
+        while count < int(run_multiple)+1:
             # use either 1 or random seed
             seed = None if random_seed else count
 
             action_predictor(
                 ckpt_path, 'cuda:0',
-                seed=seed, save_path=save_path+f'{count}.mp4').run()
+                seed=0, save_path=save_path+f'{count}').run()
 
             count += 1
 
