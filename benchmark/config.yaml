@@ -1,14 +1,17 @@
 ckpt_path: ../overfit/120_img.ckpt
 device: 'cuda:0'
+output_path: ../vid/test.mp4
+playback_speed: 2
 
-# [Rows, columns]
 border: 3
 
 runs:
-  - seed: [1, 2, 3, 4, 5, 6]
-    output_path: test.mp4
-    num_of_runs: 6
-    speed: 2
+  - seed: [1, 2, 3]
+    num_of_runs: 3
+  - seed: [1, 2, 3]
+    num_of_runs: 3
+  - seed: random
+    num_of_runs: 3
 
 
 # runs:

@@ -52,11 +52,13 @@ class action_predictor:
         self.video: cv2.VideoWriter | None = None
         if save_path:
             import cv2
-            print("saving in: ", save_path+'.mp4')
+            if '.mp4' not in save_path:
+                save_path = save_path+'.mp4'
+            print("saving in: ", save_path)
             width = (FIELD_LENGTH+2*PADDING[0])*4
             height = (FIELD_LENGTH+2*PADDING[1])*4
             self.video = cv2.VideoWriter(
-                save_path + '.mp4',
+                save_path,
                 cv2.VideoWriter_fourcc(*'MP4V'),
                 30.0, (width, height))
 
