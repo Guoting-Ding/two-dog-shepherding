@@ -4,10 +4,13 @@ defaults:
 
 name: sheep_lowdim
 
-dataset_path: ../24.zarr
+dataset_path: ../120.zarr
 
-# 1 shepherd and 5 sheep, 2 dim per object
-obs_dim: 12
+# 1 shepherd  (2)
+# 5 sheep     (10)
+# com         (2)
+# goal        (2)
+obs_dim: 16
 action_dim: 2
 keypoint_dim: 0
 

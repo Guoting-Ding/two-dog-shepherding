@@ -91,7 +91,7 @@ optimizer:
   betas: [0.9, 0.95]
 
 training:
-  device: "cuda:0"
+  device: "cuda:1"
   seed: 42
   debug: False
   resume: True
@@ -99,13 +99,13 @@ training:
   lr_scheduler: cosine
   # Transformer needs LR warmup
   lr_warmup_steps: 1000
-  num_epochs: 1001
+  num_epochs: 501
   gradient_accumulate_every: 1
   use_ema: True
   # training loop control
   # in epochs
   rollout_every: 50
-  checkpoint_every: 50
+  checkpoint_every: 100
   val_every: 1
   sample_every: 5
   # steps per epoch
@@ -115,10 +115,10 @@ training:
   tqdm_interval_sec: 1.0
 
 logging:
-  project: com_dog_dist
+  project: all_data
   resume: True
   mode: online
-  name: ${now:%Y.%m.%d-%H.%M.%S}_${name}_${task_name}
+  name: ${task_name}
   tags: ["${name}", "${task_name}", "${exp_name}"]
   id: null
   group: null
@@ -127,7 +127,7 @@ checkpoint:
   topk:
     monitor_key: train_loss
     mode: max
-    k: 5
+    k: 10
     format_str: 'epoch={epoch:04d}-train_loss={train_loss:.3f}.ckpt'
   save_last_ckpt: True
   save_last_snapshot: False
@@ -140,7 +140,7 @@ hydra:
   job:
     override_dirname: ${name}
   run:
-    dir: data/outputs/${now:%Y.%m.%d}/${now:%H.%M.%S}_${name}_${task_name}
+    dir: data/outputs/all_data/${task_name}
   sweep:
-    dir: data/outputs/${now:%Y.%m.%d}/${now:%H.%M.%S}_${name}_${task_name}
+    dir: data/outputs/all_data/${task_name}
     subdir: ${hydra.job.num}

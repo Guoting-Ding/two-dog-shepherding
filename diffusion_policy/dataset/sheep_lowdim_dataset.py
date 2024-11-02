@@ -26,7 +26,7 @@ class SheepDataset(BaseLowdimDataset):
                  ):
         super().__init__()
         self.replay_buffer = ReplayBuffer.copy_from_path(
-            zarr_path, keys=['pos', 'sheep_pos', 'action'])
+            zarr_path, keys=['pos', 'sheep_pos', 'action', 'com', 'goal'])
 
         val_mask = get_val_mask(
             n_episodes=self.replay_buffer.n_episodes,
@@ -77,9 +77,11 @@ class SheepDataset(BaseLowdimDataset):
     def _sample_to_data(self, sample):
         pos = sample['pos'].astype(np.float)
         sheep_pos = sample['sheep_pos'].astype(np.float)
+        com = sample['com'].astype(np.float)
+        goal = sample['goal'].astype(np.float)
 
         data = {
-            'obs': np.hstack([pos, sheep_pos]),
+            'obs': np.hstack([pos, sheep_pos, com, goal]),
             'action': sample['action']
         }
         return data

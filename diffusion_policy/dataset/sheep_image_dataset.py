@@ -27,7 +27,7 @@ class SheepDataset(BaseImageDataset):
 
         super().__init__()
         self.replay_buffer = ReplayBuffer.copy_from_path(
-            zarr_path, keys=['img', 'pos', 'sheep_pos', 'action'])
+            zarr_path, keys=['img', 'pos', 'sheep_pos', 'action', 'com', 'goal'])
 
         val_mask = get_val_mask(
             n_episodes=self.replay_buffer.n_episodes,
@@ -67,6 +67,8 @@ class SheepDataset(BaseImageDataset):
             'action': self.replay_buffer['action'],
             'pos': self.replay_buffer['pos'],
             'sheep_pos': self.replay_buffer['sheep_pos'],
+            'com': self.replay_buffer['com'],
+            'goal': self.replay_buffer['goal'],
         }
         normalizer = LinearNormalizer()
         normalizer.fit(data=data, last_n_dims=1, mode=mode, **kwargs)
@@ -80,12 +82,16 @@ class SheepDataset(BaseImageDataset):
         image = np.moveaxis(sample['img'], -1, 1)/255
         pos = sample['pos'].astype(np.float)
         sheep_pos = sample['sheep_pos'].astype(np.float)
+        com = sample['com'].astype(np.float)
+        goal = sample['goal'].astype(np.float)
 
         data = {
             'obs': {
                 'image': image,  # T, 3, 230, 230
                 'pos': pos,
                 'sheep_pos': sheep_pos,
+                'com': com,
+                'goal': goal,
             },
             'action': sample['action'].astype(np.float32)  # T, 2
         }
