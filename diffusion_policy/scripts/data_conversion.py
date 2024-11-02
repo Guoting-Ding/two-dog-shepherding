@@ -49,13 +49,16 @@ def main(config, rotate):
         pos_list = np.loadtxt(path + "/pos.csv", delimiter=',', skiprows=0)
         sheep_pos = np.loadtxt(path + "/sheep_pos.csv",
                                delimiter=',', skiprows=0)
+        shape = pos_list.shape
+        goal = np.tile([0, 149], (shape[0], 1))
         episode = {
             "img": img_list,
             "pos": pos_list[:, 0:2],
             "action": pos_list[:, 2:4],
             "com": pos_list[:, 4:6],
             "dist": pos_list[:, 6:7],
-            "sheep_pos": sheep_pos
+            "sheep_pos": sheep_pos,
+            "goal": goal,
         }
         replay_buffer.add_episode(episode, compressors='disk')
 

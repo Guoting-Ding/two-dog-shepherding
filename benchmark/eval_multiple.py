@@ -182,7 +182,7 @@ def main(config: str):
         os.remove(tf)
 
 
-def print_progress_bar(iteration, total, length=40):
+def print_progress_bar(iteration: int, total: int, length: int = 40):
     """Print a progress bar to the terminal."""
     percent = (iteration / total)
     filled_length = int(length * percent)
