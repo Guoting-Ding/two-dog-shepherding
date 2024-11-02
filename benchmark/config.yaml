@@ -1,25 +1,40 @@
+# General/Global Params
 ckpt_path: ../overfit/120_img.ckpt
 device: 'cuda:0'
 output_path: ../vid/test.mp4
 playback_speed: 2
-
 border: 3
 
+
+# Params for drawing path
+draw_path: True
+path_color: [255, 242, 50] # BGR
+path_size: 4
+
+# range for color map, based on trial & error
+color_max: [255, 35, 35]
+color_min: [230, 15, 15]
+
+
+# What runs to benchmark
 runs:
-  - seed: [1, 2, 3]
-    num_of_runs: 3
-  - seed: [1, 2, 3]
-    num_of_runs: 3
   - seed: random
     num_of_runs: 3
-
+    game_params:
+      sheep_top_right: False
+  - seed: random
+    num_of_runs: 3
+    game_params:
+      random_goal: True
+  - seed: random
+    num_of_runs: 3
+    game_params:
+      start_in_goal: False
 
 # runs:
+#   - seed: [1, 2, 3]
+#     num_of_runs: 3
+#   - seed: [1, 2, 3]
+#     num_of_runs: 3
 #   - seed: random
-#     num_of_runs: 4
-#     game_params:
-#       - sheep_top_right: False
-#   - seed: random
-#     num_of_runs: 4
-#     game_params:
-#       - random_goal: True
+#     num_of_runs: 3

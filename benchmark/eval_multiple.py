@@ -1,5 +1,6 @@
 import contextlib
 import os
+import sys
 import tempfile
 
 import click
@@ -19,6 +20,8 @@ SHAPE = {
     8: (2, 4),
     9: (3, 3)
 }
+
+S_COLOR = np.array((255, 25, 25), dtype=np.uint8)
 
 
 @ click.command()
@@ -42,6 +45,7 @@ def main(config: str):
 
         # Use global config if local doesn't exist
         ckpt = each['ckpt_path'] if 'ckpt_path' in each else cfg.ckpt_path
+        game_params = each['game_params'] if 'game_params' in each else None
 
         # Iterate through each seed and run
         for seed in seed_list:
@@ -52,12 +56,13 @@ def main(config: str):
             # Evaluate and save to the temp file, but with no output
             print(f"Evaluating {ckpt} with seed {seed}")
             with open(os.devnull, 'w') as fnull:
-                with contextlib.redirect_stderr(fnull):
+                with contextlib.redirect_stderr(fnull), contextlib.redirect_stdout(fnull):
                     action_predictor(ckpt_path=ckpt,
                                      device=cfg.device,
                                      seed=seed,
                                      save_path=tf,
-                                     draw_path=True).run()
+                                     draw_path=False,
+                                     param_dict=game_params).run()
 
     # Create capture devices
     caps = [cv2.VideoCapture(video) for video in tf_list]
@@ -85,7 +90,16 @@ def main(config: str):
         (cfg.border, shape[0], 3), dtype=np.uint8
     )
 
+    # Path drawing params
+    if cfg.draw_path:
+        color_max = np.array(cfg.color_max, dtype=np.uint8)
+        color_min = np.array(cfg.color_min, dtype=np.uint8)
+
     # Read from temp files and write to output video
+    print("Beginning Video Stitching")
+    shepherd_pos = []
+    total_frames = int(caps[0].get(cv2.CAP_PROP_FRAME_COUNT))
+    count = 0
     while True:
         frames = []
         for cap in caps:
@@ -128,7 +142,34 @@ def main(config: str):
         # Remove the extra line at the end
         result.pop(-1)
         result = np.vstack(result)
+
+        # Draw the path
+        if cfg.draw_path:
+            # Find contours that match the shepherd's color
+            mask = cv2.inRange(result, color_min, color_max)
+            contours, _ = cv2.findContours(
+                mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+            # Loop through each contour to find their centers
+            for contour in contours:
+                M = cv2.moments(contour)
+                if M['m00'] != 0:
+                    cx = int(M['m10'] / M['m00'])
+                    cy = int(M['m01'] / M['m00'])
+                    shepherd_pos.append((cx, cy))
+
+            # Draw all previous points
+            for point in shepherd_pos:
+                cv2.circle(result, point, cfg.path_size, cfg.path_color, -1)
+
         out.write(result)
+
+        # Update pgrogress bar
+        print_progress_bar(count, total_frames)
+        count += 1
+
+    # Sent a new line to std out
+    print()
 
     # Release capture devices
     for cap in caps:
@@ -139,6 +180,15 @@ def main(config: str):
     # Clean up temp files
     for tf in tf_list:
         os.remove(tf)
+
+
+def print_progress_bar(iteration, total, length=40):
+    """Print a progress bar to the terminal."""
+    percent = (iteration / total)
+    filled_length = int(length * percent)
+    bar = '█' * filled_length + '-' * (length - filled_length)
+    sys.stdout.write(f'\r|{bar}| {percent:.1%} Complete')
+    sys.stdout.flush()
 
 
 if __name__ == "__main__":

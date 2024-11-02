@@ -2,6 +2,7 @@
 import sys
 import threading
 from collections import deque
+from typing import Dict
 
 import click
 import dill
@@ -35,7 +36,8 @@ class action_predictor:
                  device: str = 'cuda:0',
                  seed: int = None,
                  save_path: str = None,
-                 draw_path: bool = True) -> None:
+                 draw_path: bool = True,
+                 param_dict: Dict[str, any] = None) -> None:
         """
         Create the action_predictor object.
 
@@ -46,6 +48,7 @@ class action_predictor:
             save_path (str | None): Path to save the result.
             draw_path (bool): Draw the previous path of the shepherd. Defaults
                 to True.
+            param_dict (Dict[str, any]): Parameter dict for the game environment.
 
         """
         self.img = True if "img" in ckpt_path else False
@@ -59,10 +62,11 @@ class action_predictor:
             height = (FIELD_LENGTH+2*PADDING[1])*4
             self.video = cv2.VideoWriter(
                 save_path,
-                cv2.VideoWriter_fourcc(*'MP4V'),
+                cv2.VideoWriter_fourcc(*'mp4v'),
                 30.0, (width, height))
 
-        self.env = Game(seed=seed)
+        self.env = Game(
+            seed=seed, **param_dict) if param_dict is not None else Game(seed=seed)
         self.fpsClock = pygame.time.Clock()
 
         if draw_path:
