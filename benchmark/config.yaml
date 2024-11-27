@@ -1,10 +1,10 @@
 # General/Global Params
-ckpt_path: ../overfit/120_img.ckpt
 device: 'cuda:0'
-output_path: ../vid/test.mp4
+output_path: ../vid/11-16.mp4
 playback_speed: 2
 border: 3
-
+model_num_sheep: 5
+# ckpt_path: ../ckpt/varied_low.ckpt
 
 # Params for drawing path
 draw_path: True
@@ -17,24 +17,233 @@ color_min: [230, 15, 15]
 
 
 # What runs to benchmark
-runs:
-  - seed: random
-    num_of_runs: 3
-    game_params:
-      sheep_top_right: False
-  - seed: random
-    num_of_runs: 3
-    game_params:
-      random_goal: True
-  - seed: random
-    num_of_runs: 3
-    game_params:
-      start_in_goal: False
-
+# 1-4 sheep
 # runs:
-#   - seed: [1, 2, 3]
-#     num_of_runs: 3
-#   - seed: [1, 2, 3]
-#     num_of_runs: 3
-#   - seed: random
-#     num_of_runs: 3
+#   - seed: Random
+#     num_of_runs: 2
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "1 sheep"
+#     game_params:
+#       num_sheep: 1
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 2
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "2 sheep"
+#     game_params:
+#       num_sheep: 2
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 2
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "3 sheep"
+#     game_params:
+#       num_sheep: 3
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 2
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "4 sheep"
+#     game_params:
+#       num_sheep: 4
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+
+# 5 sheep
+# runs:
+#   - seed: Random
+#     num_of_runs: 4
+#     ckpt_path: ../ckpt/varied_low.ckpt
+#     # label: "1 sheep"
+#     game_params:
+#       num_sheep: 5
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+
+
+# 6-9
+# runs:
+#   - seed: Random
+#     num_of_runs: 2
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "6 sheep"
+#     game_params:
+#       num_sheep: 6
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 2
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "7 sheep"
+#     game_params:
+#       num_sheep: 7
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 2
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "8 sheep"
+#     game_params:
+#       num_sheep: 8
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 2
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "9 sheep"
+#     game_params:
+#       num_sheep: 9
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+
+
+# 10 benchmark
+# runs:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "10"
+#     game_params:
+#       num_sheep: 10
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "random goal"
+#     game_params:
+#       num_sheep: 10
+#       random_goal: True
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "random sheep"
+#     game_params:
+#       num_sheep: 10
+#       sheep_top_right: False
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "10"
+#     game_params:
+#       num_sheep: 10
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "random goal"
+#     game_params:
+#       num_sheep: 10
+#       random_goal: True
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "random sheep"
+#     game_params:
+#       num_sheep: 10
+#       sheep_top_right: False
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+
+# 11-16
+runs:
+  - seed: Random
+    num_of_runs: 1
+    ckpt_path: ../ckpt/rotated.ckpt
+    label: "11"
+    game_params:
+      num_sheep: 11
+    obs:
+      pos:
+      sheep_pos:
+      goal:
+  - seed: Random
+    num_of_runs: 1
+    ckpt_path: ../ckpt/rotated.ckpt
+    label: "12"
+    game_params:
+      num_sheep: 12
+    obs:
+      pos:
+      sheep_pos:
+      goal:
+  - seed: Random
+    num_of_runs: 1
+    ckpt_path: ../ckpt/rotated.ckpt
+    label: "13"
+    game_params:
+      num_sheep: 13
+    obs:
+      pos:
+      sheep_pos:
+      goal:
+  - seed: Random
+    num_of_runs: 1
+    ckpt_path: ../ckpt/rotated.ckpt
+    label: "14"
+    game_params:
+      num_sheep: 14
+    obs:
+      pos:
+      sheep_pos:
+      goal:
+  - seed: Random
+    num_of_runs: 1
+    ckpt_path: ../ckpt/rotated.ckpt
+    label: "15"
+    game_params:
+      num_sheep: 15
+    obs:
+      pos:
+      sheep_pos:
+      goal:
+  - seed: Random
+    num_of_runs: 1
+    ckpt_path: ../ckpt/rotated.ckpt
+    label: "16"
+    game_params:
+      num_sheep: 16
+    obs:
+      pos:
+      sheep_pos:
+      goal:

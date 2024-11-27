@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import List, Tuple
 
 import click
@@ -6,7 +7,7 @@ import cv2
 import numpy as np
 from omegaconf import OmegaConf
 
-from diffusion_policy.diffusion_policy.common.replay_buffer import ReplayBuffer
+from diffusion_policy.common.replay_buffer import ReplayBuffer
 
 
 @click.command()
@@ -34,6 +35,8 @@ def main(config, rotate):
     replay_buffer = ReplayBuffer.create_from_path(
         zarr_path=zarr_path, mode='w')
 
+    count = 0
+    print_progress_bar(count, len(dir_list))
     # Add data to zarr, each directory contains one episode
     for dir in dir_list:
         path = cfg.data_dir + str(dir)
@@ -49,60 +52,87 @@ def main(config, rotate):
         pos_list = np.loadtxt(path + "/pos.csv", delimiter=',', skiprows=0)
         sheep_pos = np.loadtxt(path + "/sheep_pos.csv",
                                delimiter=',', skiprows=0)
-        shape = pos_list.shape
-        goal = np.tile([0, 149], (shape[0], 1))
         episode = {
             "img": img_list,
             "pos": pos_list[:, 0:2],
             "action": pos_list[:, 2:4],
-            "com": pos_list[:, 4:6],
-            "dist": pos_list[:, 6:7],
+            # "com": pos_list[:, 4:6],
+            # "dist": pos_list[:, 6:7],
             "sheep_pos": sheep_pos,
-            "goal": goal,
+            "goal": pos_list[:, 7:9],
         }
         replay_buffer.add_episode(episode, compressors='disk')
 
-        # TODO: Update this to take in position and action and sheep_pos
-        if rotate.lower == 'true':
-            # Rotate 90 degrees
-            add_rotation(img_list=img_list, pos_list=pos_list,
-                         replay_buff=replay_buffer)
-            # Rotate 180 degrees
-            add_rotation(img_list=img_list, pos_list=pos_list,
-                         replay_buff=replay_buffer)
-            # Rotate 270 degrees
-            add_rotation(img_list=img_list, pos_list=pos_list,
-                         replay_buff=replay_buffer)
+        if rotate.lower() == 'true':
+            add_rotations(img_list=img_list, pos_list=pos_list,
+                          sheep_pos=sheep_pos, replay_buff=replay_buffer)
+
+        count += 1
+        print_progress_bar(count, len(dir_list))
 
     print(
-        f"Converted {replay_buffer.n_episodes}",
+        f"\nConverted {replay_buffer.n_episodes}",
         f"episodes to zarr format successfully and saved to {zarr_path}")
 
 
-def add_rotation(img_list, pos_list, replay_buff):
-    rotated_images = [cv2.rotate(
-        image, cv2.ROTATE_90_COUNTERCLOCKWISE) for image in img_list]
-    rotated_pos = [rotate_pos(pos) for pos in pos_list]
+def add_rotations(img_list, pos_list, sheep_pos, replay_buff):
+    for r in range(1, 4):
+        rotated_images = [cv2.rotate(
+            image, cv2.ROTATE_90_COUNTERCLOCKWISE) for image in img_list]
+        rotated_pos = [rotate_pos(pos, r) for pos in pos_list[:, 0:2]]
+        rotated_action = [rotate_pos(action, r) for action in pos_list[:, 2:4]]
+        rotated_goal = [rotate_pos(goal, r) for goal in pos_list[:, 7:9]]
 
-    episode = {
-        "img": np.array(rotated_images),
-        "action": np.array(rotated_pos)
-    }
-    replay_buff.add_episode(episode, compressors='disk')
+        rotated_sheep = np.copy(sheep_pos)
+
+        # Loop through each row and rotate each pair (x, y) of coordinates
+        # Iterate over each row (i-th point)
+        for i in range(sheep_pos.shape[0]):
+            # Iterate over each pair (x, y)
+            for j in range(0, sheep_pos.shape[1], 2):
+                rotated_x, rotated_y = rotate_pos(
+                    [sheep_pos[i, j], sheep_pos[i, j + 1]],
+                    r
+                )
+                # Store the rotated x and y values
+                rotated_sheep[i, j] = rotated_x
+                rotated_sheep[i, j + 1] = rotated_y
+
+        episode = {
+            "img": np.array(rotated_images),
+            "pos": np.array(rotated_pos),
+            "action": np.array(rotated_action),
+            "sheep_pos": np.array(rotated_sheep),
+            "goal": np.array(rotated_goal),
+        }
+        replay_buff.add_episode(episode, compressors='disk')
 
 
-def rotate_pos(pos: List[float]) -> Tuple[float]:
+def rotate_pos(pos: List[float], num: int) -> Tuple[float]:
     """
     Rotates the field coordinate by 90 degrees, ccw.
 
     Args:
         pos (List[float]): The x and y position
+        num (int): Numer of 90 degree rotations to make
 
     Returns:
         List[float]: new x and y position
     """
     assert len(pos) == 2, "Postion must be x and y"
-    return [-pos[1]+150, pos[0]]
+    if num <= 1:
+        return [-pos[1]+150, pos[0]]
+    else:
+        return rotate_pos([-pos[1]+150, pos[0]], num-1)
+
+
+def print_progress_bar(iteration: int, total: int, length: int = 40):
+    """Print a progress bar to the terminal."""
+    percent = (iteration / total)
+    filled_length = int(length * percent)
+    bar = '█' * filled_length + '-' * (length - filled_length)
+    sys.stdout.write(f'\r|{bar}| {percent:.1%} Complete')
+    sys.stdout.flush()
 
 
 if __name__ == '__main__':

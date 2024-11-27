@@ -6,13 +6,14 @@ import tempfile
 import click
 import cv2
 import numpy as np
+from benchmark.action_predictor import action_predictor
 from omegaconf import OmegaConf
 
-from diffusion_policy.benchmark.action_predictor import action_predictor
 from shepherd_game.parameters import FIELD_LENGTH, PADDING
 
 # Lookup table
 SHAPE = {
+    1: (1, 1),
     2: (1, 2),
     3: (1, 3),
     4: (2, 2),
@@ -43,9 +44,11 @@ def main(config: str):
         elif type(seed_list) == int:
             seed_list = [seed_list for _ in range(0, each['num_of_runs'])]
 
-        # Use global config if local doesn't exist
+        # Use global config if local doesn't exist, or use None
         ckpt = each['ckpt_path'] if 'ckpt_path' in each else cfg.ckpt_path
         game_params = each['game_params'] if 'game_params' in each else None
+        label = each['label'] if 'label' in each else None
+        num_sheep = each['model_num_sheep'] if 'model_num_sheep' in each else cfg.model_num_sheep
 
         # Iterate through each seed and run
         for seed in seed_list:
@@ -55,20 +58,22 @@ def main(config: str):
 
             # Evaluate and save to the temp file, but with no output
             print(f"Evaluating {ckpt} with seed {seed}")
-            with open(os.devnull, 'w') as fnull:
-                with contextlib.redirect_stderr(fnull), contextlib.redirect_stdout(fnull):
-                    action_predictor(ckpt_path=ckpt,
-                                     device=cfg.device,
-                                     seed=seed,
-                                     save_path=tf,
-                                     draw_path=False,
-                                     param_dict=game_params).run()
+            # with open(os.devnull, 'w') as fnull:
+            #     with contextlib.redirect_stderr(fnull), contextlib.redirect_stdout(fnull):
+            action_predictor(ckpt_path=ckpt,
+                             obs=each['obs'],
+                             device=cfg.device,
+                             seed=seed,
+                             save_path=tf,
+                             param_dict=game_params,
+                             label=label,
+                             model_num_sheep=num_sheep).run()
 
     # Create capture devices
     caps = [cv2.VideoCapture(video) for video in tf_list]
 
     # Create video writer
-    # Multiply by 4 since action_predictor scales up by 4
+    # Multiply by 4 since action_predictor scales video up by 4
     frame_width = (FIELD_LENGTH+2*PADDING[0])*4
     frame_height = (FIELD_LENGTH+2*PADDING[1])*4
     y_size, x_size = SHAPE[len(tf_list)]
@@ -168,7 +173,8 @@ def main(config: str):
         print_progress_bar(count, total_frames)
         count += 1
 
-    # Sent a new line to std out
+    # Send a new line to std out
+    print_progress_bar(total_frames, total_frames)
     print()
 
     # Release capture devices
