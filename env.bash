@@ -36,12 +36,7 @@ pip install pygame==2.1.2
 pip install pymunk==6.2.1
 pip install gym==0.26.2
 pip install shapely==1.8.4
-# requires mujoco py dependencies libosmesa6-dev libgl1-mesa-glx libglfw3 patchelf
+pip install huggingface_hub==0.10.1
 pip install free-mujoco-py==2.1.6
-# Can't install with Python 3.10
-# pip install robosuite@https://github.com/cheng-chi/robosuite/archive/277ab9588ad7a4f4b55cf75508b44aa67ec171f0.tar.gz
 pip install pynput==1.7.6
-# requires librealsense https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md
-# pip install pyrealsense2==2.51.1.4348
-# pip install spnav@https://github.com/cheng-chi/spnav/archive/c1c938ebe3cc542db4685e0d13850ff1abfdb943.tar.gz
 pip install atomics==1.0.2

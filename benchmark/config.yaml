@@ -1,10 +1,11 @@
 # General/Global Params
+# These will be override by any local params specified below
 device: 'cuda:0'
-output_path: ../vid/11-16.mp4
+output_path: ../vid/100.mp4
 playback_speed: 2
 border: 3
 model_num_sheep: 5
-# ckpt_path: ../ckpt/varied_low.ckpt
+ckpt_path: ../ckpt/rotated.ckpt
 
 # Params for drawing path
 draw_path: True
@@ -12,53 +13,54 @@ path_color: [255, 242, 50] # BGR
 path_size: 4
 
 # range for color map, based on trial & error
+# This is used for tracking the shepherd position
 color_max: [255, 35, 35]
 color_min: [230, 15, 15]
 
 
 # What runs to benchmark
 # 1-4 sheep
-# runs:
-#   - seed: Random
-#     num_of_runs: 2
-#     ckpt_path: ../ckpt/rotated.ckpt
-#     label: "1 sheep"
-#     game_params:
-#       num_sheep: 1
-#     obs:
-#       pos:
-#       sheep_pos:
-#       goal:
-#   - seed: Random
-#     num_of_runs: 2
-#     ckpt_path: ../ckpt/rotated.ckpt
-#     label: "2 sheep"
-#     game_params:
-#       num_sheep: 2
-#     obs:
-#       pos:
-#       sheep_pos:
-#       goal:
-#   - seed: Random
-#     num_of_runs: 2
-#     ckpt_path: ../ckpt/rotated.ckpt
-#     label: "3 sheep"
-#     game_params:
-#       num_sheep: 3
-#     obs:
-#       pos:
-#       sheep_pos:
-#       goal:
-#   - seed: Random
-#     num_of_runs: 2
-#     ckpt_path: ../ckpt/rotated.ckpt
-#     label: "4 sheep"
-#     game_params:
-#       num_sheep: 4
-#     obs:
-#       pos:
-#       sheep_pos:
-#       goal:
+runs:
+  - seed: Random
+    num_of_runs: 1
+    ckpt_path: ../ckpt/rotated.ckpt
+    label: "1 sheep"
+    game_params:
+      num_sheep: 1
+    obs:
+      pos:
+      sheep_pos:
+      goal:
+  - seed: Random
+    num_of_runs: 1
+    ckpt_path: ../ckpt/rotated.ckpt
+    label: "2 sheep"
+    game_params:
+      num_sheep: 2
+    obs:
+      pos:
+      sheep_pos:
+      goal:
+  - seed: Random
+    num_of_runs: 1
+    ckpt_path: ../ckpt/rotated.ckpt
+    label: "3 sheep"
+    game_params:
+      num_sheep: 3
+    obs:
+      pos:
+      sheep_pos:
+      goal:
+  - seed: Random
+    num_of_runs: 1
+    ckpt_path: ../ckpt/rotated.ckpt
+    label: "4 sheep"
+    game_params:
+      num_sheep: 4
+    obs:
+      pos:
+      sheep_pos:
+      goal:
 
 # 5 sheep
 # runs:
@@ -186,64 +188,64 @@ color_min: [230, 15, 15]
 #       goal:
 
 # 11-16
-runs:
-  - seed: Random
-    num_of_runs: 1
-    ckpt_path: ../ckpt/rotated.ckpt
-    label: "11"
-    game_params:
-      num_sheep: 11
-    obs:
-      pos:
-      sheep_pos:
-      goal:
-  - seed: Random
-    num_of_runs: 1
-    ckpt_path: ../ckpt/rotated.ckpt
-    label: "12"
-    game_params:
-      num_sheep: 12
-    obs:
-      pos:
-      sheep_pos:
-      goal:
-  - seed: Random
-    num_of_runs: 1
-    ckpt_path: ../ckpt/rotated.ckpt
-    label: "13"
-    game_params:
-      num_sheep: 13
-    obs:
-      pos:
-      sheep_pos:
-      goal:
-  - seed: Random
-    num_of_runs: 1
-    ckpt_path: ../ckpt/rotated.ckpt
-    label: "14"
-    game_params:
-      num_sheep: 14
-    obs:
-      pos:
-      sheep_pos:
-      goal:
-  - seed: Random
-    num_of_runs: 1
-    ckpt_path: ../ckpt/rotated.ckpt
-    label: "15"
-    game_params:
-      num_sheep: 15
-    obs:
-      pos:
-      sheep_pos:
-      goal:
-  - seed: Random
-    num_of_runs: 1
-    ckpt_path: ../ckpt/rotated.ckpt
-    label: "16"
-    game_params:
-      num_sheep: 16
-    obs:
-      pos:
-      sheep_pos:
-      goal:
+# runs:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "11"
+#     game_params:
+#       num_sheep: 11
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "12"
+#     game_params:
+#       num_sheep: 12
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "13"
+#     game_params:
+#       num_sheep: 13
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "14"
+#     game_params:
+#       num_sheep: 14
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "15"
+#     game_params:
+#       num_sheep: 15
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:
+#   - seed: Random
+#     num_of_runs: 1
+#     ckpt_path: ../ckpt/rotated.ckpt
+#     label: "16"
+#     game_params:
+#       num_sheep: 16
+#     obs:
+#       pos:
+#       sheep_pos:
+#       goal:

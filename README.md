@@ -31,13 +31,50 @@ ws
 export PYTHONPATH=.:$PYTHONPATH
 ```
 
+## Training
+1. Modify the [data_conversion.yaml](diffusion_policy/config/task/data_conversion/data_conversion.yaml) file to describe how you want to convert data
+
+2. Convert the saved data from the shepherd game to Zarr format:
+```
+python3 diffusion_policy/scripts/data_conversion.py --config=diffusion_policy/config/task/data_conversion/data_conversion.yaml
+```
+
+3. Modify the `image` or `lowdim` dataset, config, and workspace files.
+    - If you change the observations, make sure to change them here too
+
+4. Train by running `train.py` with the workspace. For example:
+```
+python3 train.py --config-name=sheep_transformer_lowdim_workspace
+```
+
+## Evaulating Trained models
+You can use the `action_predictor.py` file or the benchmark util. 
+
+For action predictor, the following flags are accepted:
+- `-c` or `--ckpt_path`: Checkpoint path of the model (Required)
+- `-s` or `--save_path`: Saves a video of the evaluating to the specified path
+- `-m` or `--run_multiple`: Runs multiple inferences
+- `-r` or `--random_seed`: Whether or not to use a random seed for the sheep positions
+
+For the benchmark util, run `single_shepherd_eval.py`. Refer to [config.yaml](benchmark/config.yaml) for how to modify parameters
+
+
 ## Changelog
 - [data_conversion.py](diffusion_policy/scripts/data_conversion.py): A script for converting data to the .zarr format for training
+- [data_conversion.yaml](diffusion_policy/config/task/data_conversion/data_conversion.yaml): Config file for describing how to convert data
 - [env.bash](env.bash): A script to install the necessary packages
 - [README.md](README.md): This readme file. Modified to document this project
 - [sheep_image_dataset.py](diffusion_policy/dataset/sheep_image_dataset.py): The iamge dataset for shepherding
 - [data_conversion.yaml](diffusion_policy/config/task/data_conversion/data_conversion.yaml): Config file that determines how data is converted into the .zarr format
 Below is the original README
+-[sheep_*_workspace.yaml](diffusion_policy/config/): Various workspace files for training shepherding models
+-[sheep_*.yaml](diffusion_policy/config/task/): Task config files for the shepherding models
+-[sheep_*_dataset.py](diffusion_policy/dataset/): Dataset files for the shepherding models
+-[sheep_*_runner.py](diffusion_policy/env_runner/): Environment runner files for the shepherding models
+-[action_predictor.py](benchmark/action_predictor.py): Running an inference in the simulation environment, given a model
+-[config.yaml](benchmark/config.yaml): A config file for the benchmark util
+-[single_shepherd_eval.py](benchmark/single_shepherd_eval.py): A benchmark util for running multiple inferences and stitching resulting videos together
+
 
 # Diffusion Policy
 
@@ -51,7 +88,7 @@ Below is the original README
 [Cheng Chi](http://cheng-chi.github.io/)<sup>1</sup>,
 [Siyuan Feng](https://www.cs.cmu.edu/~sfeng/)<sup>2</sup>,
 [Yilun Du](https://yilundu.github.io/)<sup>3</sup>,
-[Zhenjia Xu](https://www.zhenjiaxu.com/)<sup>1</sup>,
+[Zhenjia Xu](https://www.zhenjiaxu.com/)<sup>1</sup>,~
 [Eric Cousineau](https://www.eacousineau.com/)<sup>2</sup>,
 [Benjamin Burchfiel](http://www.benburchfiel.com/)<sup>2</sup>,
 [Shuran Song](https://www.cs.columbia.edu/~shurans/)<sup>1</sup>
