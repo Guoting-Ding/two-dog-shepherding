@@ -76,6 +76,8 @@ Below is the original README
 -[single_shepherd_eval.py](benchmark/single_shepherd_eval.py): A benchmark util for running multiple inferences and stitching resulting videos together
 
 
+Below is the original README from the original repository
+
 # Diffusion Policy
 
 [[Project page]](https://diffusion-policy.cs.columbia.edu/)
