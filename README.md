@@ -66,14 +66,13 @@ For the benchmark util, run `single_shepherd_eval.py`. Refer to [config.yaml](be
 - [README.md](README.md): This readme file. Modified to document this project
 - [sheep_image_dataset.py](diffusion_policy/dataset/sheep_image_dataset.py): The iamge dataset for shepherding
 - [data_conversion.yaml](diffusion_policy/config/task/data_conversion/data_conversion.yaml): Config file that determines how data is converted into the .zarr format
-Below is the original README
--[sheep_*_workspace.yaml](diffusion_policy/config/): Various workspace files for training shepherding models
--[sheep_*.yaml](diffusion_policy/config/task/): Task config files for the shepherding models
--[sheep_*_dataset.py](diffusion_policy/dataset/): Dataset files for the shepherding models
--[sheep_*_runner.py](diffusion_policy/env_runner/): Environment runner files for the shepherding models
--[action_predictor.py](benchmark/action_predictor.py): Running an inference in the simulation environment, given a model
--[config.yaml](benchmark/config.yaml): A config file for the benchmark util
--[single_shepherd_eval.py](benchmark/single_shepherd_eval.py): A benchmark util for running multiple inferences and stitching resulting videos together
+- [sheep_*_workspace.yaml](diffusion_policy/config/): Various workspace files for training shepherding models
+- [sheep_*.yaml](diffusion_policy/config/task/): Task config files for the shepherding models
+- [sheep_*_dataset.py](diffusion_policy/dataset/): Dataset files for the shepherding models
+- [sheep_*_runner.py](diffusion_policy/env_runner/): Environment runner files for the shepherding models
+- [action_predictor.py](benchmark/action_predictor.py): Running an inference in the simulation environment, given a model
+- [config.yaml](benchmark/config.yaml): A config file for the benchmark util
+- [single_shepherd_eval.py](benchmark/single_shepherd_eval.py): A benchmark util for running multiple inferences and stitching resulting videos together
 
 
 Below is the original README from the original repository
