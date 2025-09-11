@@ -56,8 +56,8 @@ def main(config, rotate):
             "img": img_list,
             "pos": pos_list[:, 0:2],
             "action": pos_list[:, 2:4],
-            # "com": pos_list[:, 4:6],
-            # "dist": pos_list[:, 6:7],
+            "com": pos_list[:, 4:6],
+            "dist": pos_list[:, 6:7],
             "sheep_pos": sheep_pos,
             "goal": pos_list[:, 7:9],
         }
@@ -98,10 +98,12 @@ def add_rotations(img_list, pos_list, sheep_pos, replay_buff):
                 rotated_sheep[i, j] = rotated_x
                 rotated_sheep[i, j + 1] = rotated_y
 
+        rotated_com = [rotate_pos(com, r) for com in pos_list[:, 4:6]]
         episode = {
             "img": np.array(rotated_images),
             "pos": np.array(rotated_pos),
             "action": np.array(rotated_action),
+            "com": np.array(rotated_com),
             "sheep_pos": np.array(rotated_sheep),
             "goal": np.array(rotated_goal),
         }
