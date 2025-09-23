@@ -5,12 +5,10 @@ output_file: com_dog_dist_converted
 image_shape: [3, 180, 180]
 
 # Data folders to include, inclusive. In this example,
-# all folders, 1-16, will be included
+# all folders, 1001-1016, will be included
 data:
-  - start: 1
-    end: 7
-  - start: 8
-    end: 100
+  - start: 1001
+    end: 1016
   
 
 
