@@ -38,6 +38,26 @@ python3 diffusion_policy/diffusion_policy/scripts/data_conversion.py \
   --rotate true
 ```
   - If you use `data_conversion_2episode.py`, edit the script to use `posA` and `posB` separately and perform a conversion for each.
+### Data Requirements for Two-Dog Training
+
+For the two-dog setting, you need **four files** generated from the shepherding game:
+
+- `posA.csv`
+- `posB.csv`
+- `sheep_pos.csv`
+- `target_pos.csv`
+
+The format of `posA.csv` and `posB.csv` is as follows:
+```python
+{
+    "pos": pos_list[:, 0:2],       # dog position (x, y)
+    "action": pos_list[:, 2:4],    # action (dx, dy)
+    "com": pos_list[:, 4:6],       # center of mass vector
+    "dist": pos_list[:, 6:7],      # distance to target
+    "sheep_pos": sheep_pos,        # positions of all sheep
+    "goal": pos_list[:, 7:9]       # goal position (x, y)
+}
+
 
 3. Modify the `image` or `lowdim` dataset, config, and workspace files.
     - If you change the observations, make sure to change them here too
