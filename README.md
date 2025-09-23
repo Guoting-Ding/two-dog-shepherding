@@ -5,7 +5,7 @@ All commands will be run from the `ws` directory.
 
 2. Clone the [shepherding repository](https://github.com/kylew239/Shepherd_game) into `ws`.
 
-3. Setup the python virtual enviornment
+3. Setup the python virtual enviornment (requires **Python 3.9**)
 ```
 python3 -m venv venv
 source venv/bin/activate
@@ -27,7 +27,7 @@ ws
 ```
 export PYTHONPATH=.:$PYTHONPATH
 ```
-**Note:** This project requires **Python 3.9**. Other versions may cause dependency issues.
+
 
 Below are the notes from kylew239's fork
 
