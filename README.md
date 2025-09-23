@@ -1,4 +1,36 @@
+## Repository Setup
+All commands will be run from the `ws` directory.
+
+1. Clone this repository into the `ws` directory. 
+
+2. Clone the [shepherding repository](https://github.com/kylew239/Shepherd_game) into `ws`.
+
+3. Setup the python virtual enviornment
+```
+python3 -m venv venv
+source venv/bin/activate
+./diffusion_policy/env.bash
+pip install -e diffusion_policy/.
+```
+
+4. Ensure the directory structure looks like this:
+```
+ws
+├── .venv               # Python virtual environment for this repo
+├── data                # Contains data for each game run
+├── diffusion_policy    # this repository
+├── shepherding_game    # the shepherding pygame repository
+└── converted.zarr      # The .zarr data
+```
+
+5. If you run into `ModuleNotFoundError`, add the `ws` to your python path
+```
+export PYTHONPATH=.:$PYTHONPATH
+```
+**Note:** This project requires **Python 3.9**. Other versions may cause dependency issues.
+
 Below are the notes from kylew239's fork
+
 # Shepherding model using diffusion policy
 This repository contains code for building a shepherding model using diffusion policy and human behavior. It is based on the original [diffusion_policy](https://github.com/real-stanford/diffusion_policy) repository by Stanford.
 
