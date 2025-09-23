@@ -52,7 +52,7 @@ python3 train.py --config-name=sheep_transformer_lowdim_workspace
 ## Evaulating Trained models
 You can use files in the benchmark. For example:
 ```
-python diffusion_policy/benchmark/action_predictor_2dogs_see_t.py --ckpt_path1 dogA.ckpt --ckpt_path2 dogB.ckpt
+python diffusion_policy/benchmark/action_predictor_2dogs_see.py --ckpt_path1 dogA.ckpt --ckpt_path2 dogB.ckpt
 ```
 
 Below are the notes from kylew239's fork
