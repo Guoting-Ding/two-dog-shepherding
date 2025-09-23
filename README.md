@@ -48,7 +48,7 @@ For the two-dog setting, you need **four files** generated from the shepherding 
 - `target_pos.csv`
 
 The format of `posA.csv` and `posB.csv` is as follows:
-```python
+```
 {
     "pos": pos_list[:, 0:2],       # dog position (x, y)
     "action": pos_list[:, 2:4],    # action (dx, dy)
@@ -57,7 +57,7 @@ The format of `posA.csv` and `posB.csv` is as follows:
     "sheep_pos": sheep_pos,        # positions of all sheep
     "goal": pos_list[:, 7:9]       # goal position (x, y)
 }
-
+```
 
 3. Modify the `image` or `lowdim` dataset, config, and workspace files.
     - If you change the observations, make sure to change them here too
