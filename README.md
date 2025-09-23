@@ -1,3 +1,4 @@
+Below are the notes from Kyle's fork
 # Shepherding model using diffusion policy
 This repository contains code for building a shepherding model using diffusion policy and human behavior. It is based on the original [diffusion_policy](https://github.com/real-stanford/diffusion_policy) repository by Stanford.
 
