@@ -37,7 +37,7 @@ python3 diffusion_policy/diffusion_policy/scripts/data_conversion.py \
   --config=diffusion_policy/diffusion_policy/config/task/data_conversion/data_conversion.yaml \
   --rotate true
 ```
-    - If you use `data_conversion_2episode.py`, edit the script to use `posA` and `posB` separately and perform a conversion for each.
+  - If you use `data_conversion_2episode.py`, edit the script to use `posA` and `posB` separately and perform a conversion for each.
 
 3. Modify the `image` or `lowdim` dataset, config, and workspace files.
     - If you change the observations, make sure to change them here too
