@@ -29,15 +29,6 @@ export PYTHONPATH=.:$PYTHONPATH
 ```
 
 ## Training
-1. Modify the [data_conversion.yaml](diffusion_policy/config/task/data_conversion/data_conversion.yaml) file to describe how you want to convert data
-
-2. Convert the saved data from the shepherd game to Zarr format:
-```
-python3 diffusion_policy/diffusion_policy/scripts/data_conversion.py \
-  --config=diffusion_policy/diffusion_policy/config/task/data_conversion/data_conversion.yaml \
-  --rotate true
-```
-  - If you use `data_conversion_2episode.py`, edit the script to use `posA` and `posB` separately and perform a conversion for each.
 ### Data Requirements for Two-Dog Training
 
 For the two-dog setting, you need **four files** generated from the shepherding game:
@@ -58,6 +49,16 @@ The format of `posA.csv` and `posB.csv` is as follows:
     "goal": pos_list[:, 7:9]       # goal position (x, y)
 }
 ```
+1. Modify the [data_conversion.yaml](diffusion_policy/config/task/data_conversion/data_conversion.yaml) file to describe how you want to convert data
+
+2. Convert the saved data from the shepherd game to Zarr format:
+```
+python3 diffusion_policy/diffusion_policy/scripts/data_conversion.py \
+  --config=diffusion_policy/diffusion_policy/config/task/data_conversion/data_conversion.yaml \
+  --rotate true
+```
+  - If you use `data_conversion_2episode.py`, edit the script to use `posA` and `posB` separately and perform a conversion for each.
+
 
 3. Modify the `image` or `lowdim` dataset, config, and workspace files.
     - If you change the observations, make sure to change them here too
