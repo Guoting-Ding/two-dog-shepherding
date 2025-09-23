@@ -1,0 +1,29 @@
+defaults:
+  - _self_
+  - data_conversion: data_conversion
+
+
+name: sheep_lowdim_dogvis
+
+dataset_path: ../../../../../converted.zarr
+
+# 1 shepherd  (2)
+# 5 sheep     (10)
+# com         (2)
+# goal        (2)
+obs_dim: 18
+action_dim: 2
+keypoint_dim: 0
+
+env_runner:
+  _target_: diffusion_policy.env_runner.sheep_lowdim_runner.SheepLowdimRunner
+
+dataset:
+  _target_: diffusion_policy.dataset.sheep_lowdim_dataset.SheepDataset
+  zarr_path: ${task.dataset_path}
+  horizon: ${horizon}
+  pad_before: ${eval:'${n_obs_steps}-1+${n_latency_steps}'}
+  pad_after: ${eval:'${n_action_steps}-1'}
+  seed: 42
+  val_ratio: 0.17
+  max_train_episodes: 90
