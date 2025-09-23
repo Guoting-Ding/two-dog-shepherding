@@ -19,7 +19,7 @@ env_runner:
   _target_: diffusion_policy.env_runner.sheep_lowdim_runner.SheepLowdimRunner
 
 dataset:
-  _target_: diffusion_policy.dataset.sheep_lowdim_dataset.SheepDataset
+  _target_: diffusion_policy.dataset.sheep_lowdim_dataset_dogvis.SheepDataset
   zarr_path: ${task.dataset_path}
   horizon: ${horizon}
   pad_before: ${eval:'${n_obs_steps}-1+${n_latency_steps}'}
