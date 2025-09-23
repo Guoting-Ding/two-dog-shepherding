@@ -28,6 +28,26 @@ ws
 export PYTHONPATH=.:$PYTHONPATH
 ```
 
+## Training
+1. Modify the [data_conversion.yaml](diffusion_policy/config/task/data_conversion/data_conversion.yaml) file to describe how you want to convert data
+
+2. Convert the saved data from the shepherd game to Zarr format:
+```
+python3 diffusion_policy/diffusion_policy/scripts/data_conversion.py \
+  --config=diffusion_policy/diffusion_policy/config/task/data_conversion/data_conversion.yaml \
+  --rotate true
+```
+    - If you use `data_conversion_2episode.py`, edit the script to use `posA` and `posB` separately and perform a conversion for each.
+
+3. Modify the `image` or `lowdim` dataset, config, and workspace files.
+    - If you change the observations, make sure to change them here too
+
+4. Train by running `train.py` with the workspace. For example:
+```
+python3 train.py --config-name=sheep_transformer_lowdim_workspace
+```
+**Note:** For the two-dog setting, each model must be trained separately for Dog A and Dog B
+
 
 Below are the notes from kylew239's fork
 
