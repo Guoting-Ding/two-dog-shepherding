@@ -49,6 +49,11 @@ python3 train.py --config-name=sheep_transformer_lowdim_workspace
    - Adjust the workspace config as needed
 **Note:** For the two-dog setting, each model must be trained separately for Dog A and Dog B
 
+## Evaulating Trained models
+You can use files in the benchmark. For example:
+```
+python diffusion_policy/benchmark/action_predictor_2dogs_see_t.py --ckpt_path1 dogA.ckpt --ckpt_path2 dogB.ckpt
+```
 
 Below are the notes from kylew239's fork
 
