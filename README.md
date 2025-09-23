@@ -46,6 +46,7 @@ python3 diffusion_policy/diffusion_policy/scripts/data_conversion.py \
 ```
 python3 train.py --config-name=sheep_transformer_lowdim_workspace
 ```
+   - Adjust the workspace config as needed
 **Note:** For the two-dog setting, each model must be trained separately for Dog A and Dog B
 
 
