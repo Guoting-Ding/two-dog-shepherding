@@ -75,6 +75,20 @@ You can use files in the benchmark. For example:
 ```
 python diffusion_policy/benchmark/action_predictor_2dogs_see.py --ckpt_path1 dogA.ckpt --ckpt_path2 dogB.ckpt
 ```
+### Action Predictors
+
+- `action_predictor_1modelto2dogs.py`  
+  Uses a **single-dog model** and assigns its actions to two dogs.  
+  (Task allocation: one model → two agents)
+
+- `action_predictor_2dogs.py`  
+  Runs **two independent models**, one for each dog.  
+  Each observation has **dim=16** (dogs do **not** see each other).
+
+- `action_predictor_2dogs_vis.py`  
+  Runs **two independent models**, one for each dog.  
+  Each observation has **dim=18** (dogs can see each other).
+
 
 Below are the notes from kylew239's fork
 
