@@ -30,10 +30,7 @@ export PYTHONPATH=.:$PYTHONPATH
 
 ## Data and Checkpoints
 
-I provide dataset and checkpoint files for the **two-dog setting**:
-
-- Dataset (`.zarr` converted from `posA`, `posB`, `sheep_pos`, `target_pos`)
-- Model checkpoints (`.ckpt` for Dog A and Dog B)
+I provide data and checkpoint files for the **two-dog setting**:
 
 [Download here](https://nuwildcat-my.sharepoint.com/:f:/r/personal/ewc865_ads_northwestern_edu/Documents/_FromNUBox/Robot-shepherds/shepherd_2dogs_data?csf=1&web=1&e=tS2pbn)
 
