@@ -107,7 +107,9 @@ python diffusion_policy/benchmark/action_predictor_2dogs_see.py --ckpt_path1 dog
 
 ## Two-Dog Shepherding Example
 - 1modelto2dogs
-  <img width="203" height="189" alt="image" src="https://github.com/user-attachments/assets/1f657082-67a9-45e7-987e-aee5caa95465" />
+  ![2_dog-ezgif com-crop](https://github.com/user-attachments/assets/07a1265c-62b1-427b-8b86-4e692a450142)
+
+
 
 - 2dogs
   <img width="203" height="188" alt="image" src="https://github.com/user-attachments/assets/70acd2d1-b33a-4cb9-85e1-f1a85e5cbabb" />
