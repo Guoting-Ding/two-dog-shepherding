@@ -94,15 +94,28 @@ python diffusion_policy/benchmark/action_predictor_2dogs_see.py --ckpt_path1 dog
   - If the policy indicates a push from the right side, then Dog B executes it.
   - The dog not chosen by the policy is set to approach the flock’s centroid at a fixed speed.
 
-  
-
 - `action_predictor_2dogs.py`  
-  Runs **two independent models**, one for each dog.  
-  Each observation has **dim=16** (dogs do **not** see each other).
+  Runs **two independent single-dog models** in parallel, one controlling each dog.  
+  Each dog receives an **observation vector of dim=16**, which includes only its own state, the sheep, flock centroid, and goal.  
+  → Dogs do **not** observe each other.
 
 - `action_predictor_2dogs_vis.py`  
-  Runs **two independent models**, one for each dog.  
-  Each observation has **dim=18** (dogs can see each other).
+  Runs **two independent single-dog models** in parallel, one controlling each dog.  
+  Each dog receives an **observation vector of dim=18**, which additionally includes the other dog’s position.  
+  → Dogs can **see each other** and coordinate implicitly.
+
+
+## Two-Dog Shepherding Example
+1modelto2dogs:
+<img width="203" height="189" alt="image" src="https://github.com/user-attachments/assets/1f657082-67a9-45e7-987e-aee5caa95465" />
+2dogs:
+<img width="203" height="188" alt="image" src="https://github.com/user-attachments/assets/70acd2d1-b33a-4cb9-85e1-f1a85e5cbabb" />
+2dogs_vis:
+<img width="203" height="189" alt="image" src="https://github.com/user-attachments/assets/bfe2cf44-18d1-4a2a-af48-2fec730a7ab6" />
+
+
+
+
 
 
 Below are the notes from kylew239's fork
