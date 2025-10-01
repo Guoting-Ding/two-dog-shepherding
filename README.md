@@ -30,7 +30,7 @@ export PYTHONPATH=.:$PYTHONPATH
 
 ## Data and Checkpoints
 
-I provide data and checkpoint files for the **two-dog setting**:
+Here are data and checkpoint files could used for the **two-dog setting**:
 
 [Download here](https://nuwildcat-my.sharepoint.com/:f:/r/personal/ewc865_ads_northwestern_edu/Documents/_FromNUBox/Robot-shepherds/shepherd_2dogs_data?csf=1&web=1&e=tS2pbn)
 
@@ -89,6 +89,12 @@ python diffusion_policy/benchmark/action_predictor_2dogs_see.py --ckpt_path1 dog
 - `action_predictor_1modelto2dogs.py`  
   Uses a **single-dog model** and assigns its actions to two dogs.  
   (Task allocation: one model → two agents)
+  - Draw a line between the flock’s centroid and the goal.
+  - If the single-dog policy indicates a pushing action from the left side, then Dog A executes the action.
+  - If the policy indicates a push from the right side, then Dog B executes it.
+  - The dog not chosen by the policy is set to approach the flock’s centroid at a fixed speed.
+
+  
 
 - `action_predictor_2dogs.py`  
   Runs **two independent models**, one for each dog.  
