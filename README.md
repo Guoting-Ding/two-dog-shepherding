@@ -58,6 +58,19 @@ The format of `posA.csv` and `posB.csv` is as follows:
     "goal": pos_list[:, 7:9]       # goal position (x, y)
 }
 ```
+### Controller
+Dogs can be controlled using keyboard or game controller during data collection.
+
+- Keyboard Control
+  Uses keys (↑ ↓ ← →) to move the dog.  
+
+- **Controller Setup**  
+  1. Connect your controller to the computer.  
+  2. Run `controller.py` to identify the joystick axis IDs for vertical and horizontal movement.  
+  3. Update the corresponding IDs in `game.py` (e.g., `self.joystick.get_axis(2)`).  
+
+
+### Training
 1. Modify the [data_conversion.yaml](diffusion_policy/config/task/data_conversion/data_conversion.yaml) file to describe how you want to convert data
 
 2. Convert the saved data from the shepherd game to Zarr format:
