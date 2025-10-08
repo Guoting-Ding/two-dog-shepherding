@@ -106,17 +106,17 @@ python diffusion_policy/benchmark/action_predictor_2dogs_see.py --ckpt_path1 dog
 
 
 ## Two-Dog Shepherding Example
-- 1modelto2dogs
+- Independent Single-Dog Models in Parallel
   
   ![2_dog-ezgif com-crop](https://github.com/user-attachments/assets/07a1265c-62b1-427b-8b86-4e692a450142)
 
 
-- 2dogs
+- Two-Dog Model (Sheep Top-Right Distribution, Dogs Not Visible to Each Other)
   
   ![2d2m5s-ezgif com-crop](https://github.com/user-attachments/assets/2b52742e-36d9-4489-8414-68ca8a2363d8)
 
 
-- 2dogs_vis
+- Two-Dog Model (Sheep Random Distribution, Dogs See Each Other)
   
   ![s_r5-ezgif com-crop](https://github.com/user-attachments/assets/3fd92ecc-e586-46c9-9eff-ede38731a07c)
 
